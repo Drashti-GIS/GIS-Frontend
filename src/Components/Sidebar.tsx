@@ -17,13 +17,12 @@ import {
 
 const menuItems = [
   { name: 'Overview', icon: HiOutlineHome, href: '/admin/overview' },
-  { name: 'Work Orders', icon: HiOutlineClipboardList, href: '/admin/work-orders' },
-  { name: 'Reports', icon: HiOutlineDocumentReport, href: '/admin/reports' },
-  { name: 'CX Enhancement', icon: HiOutlineLightningBolt, href: '/admin/cx-enhancement' },
-  { name: 'Knowledge Base', icon: HiOutlineBookOpen, href: '/admin/knowledge-base' },
-  { name: 'Help Desk', icon: HiOutlineQuestionMarkCircle, href: '/admin/help-desk' },
   { name: 'Manage Users', icon: HiOutlineUserGroup, href: '/admin/manage-users' },
+  {
+    name:"Projects",icon:HiOutlineClipboardList,href:"/admin/projects"
+  },
   { name: 'Manage Roles', icon: HiOutlineUserCircle, href: '/admin/manage-roles' },
+  { name: 'Help Desk', icon: HiOutlineQuestionMarkCircle, href: '/admin/help-desk' },
   { name: 'Master Data', icon: HiOutlineDatabase, href: '/admin/master-data' },
 ];
 
@@ -33,7 +32,7 @@ export default function Sidebar() {
   return (
     <div className="h-screen bg-white border-r px-6 py-8 shadow-sm flex flex-col justify-between">
       <div>
-        <h2 className="text-xl font-bold text-gray-900 mb-8 tracking-wide">Admin Panel</h2>
+        <h2 className="text-xl font-bold text-gray-900 mb-8 tracking-wide text-center">Drashti</h2>
         <ul className="space-y-2">
           {menuItems.map(({ name, icon: Icon, href }) => (
             <li key={name}>

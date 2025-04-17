@@ -2,7 +2,7 @@ import Sidebar from '../../Components/Sidebar';
 import '../globals.css'; // If you're using Tailwind and global styles
 
 export const metadata = {
-  title: 'Admin Panel',
+  title: 'Drashti',
   description: 'Admin dashboard for managing users and content',
 };
 
