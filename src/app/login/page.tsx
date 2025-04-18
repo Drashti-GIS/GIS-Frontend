@@ -9,35 +9,27 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const validateEmail = (email: string) => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-  };
-
   const handleLogin = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!email || !password) {
-      setError('Please enter both email and password');
+      setError('Please enter both email and password.');
       return;
     }
 
-    if (!validateEmail(email)) {
-      setError('Please enter a valid email');
+    if (!emailRegex.test(email)) {
+      setError('Please enter a valid email address.');
       return;
     }
 
-    // Dummy login logic
     setError('');
-    router.push('/admin/overview'); // Redirect to the first page of the panel
+    router.push('/admin/manage-users');
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-blue-100 to-green-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Welcome Back</h2>
-
-        {error && (
-          <div className="bg-red-100 text-red-700 px-4 py-2 rounded-md mb-4 text-sm">{error}</div>
-        )}
+    <div className="min-h-screen flex items-center justify-center bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-100 via-gray-200 to-gray-300">
+      <div className="bg-white p-8 rounded-md shadow-2xl w-full max-w-md animate-fade-in">
+        <h2 className="text-3xl font-semibold text-center mb-6 text-gray-800">Login</h2>
 
         <input
           type="text"
@@ -52,12 +44,14 @@ export default function LoginPage() {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full mb-6 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full mb-4 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
+
+        {error && <p className="text-red-600 mb-4 text-sm">{error}</p>}
 
         <button
           onClick={handleLogin}
-          className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-300"
+          className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition duration-300"
         >
           Login
         </button>
@@ -65,5 +59,4 @@ export default function LoginPage() {
     </div>
   );
 }
-
 
