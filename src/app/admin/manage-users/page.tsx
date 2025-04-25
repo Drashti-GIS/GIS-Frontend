@@ -1,96 +1,76 @@
 'use client';
 
 import { useState } from 'react';
+import { HiOutlinePencilAlt, HiOutlineTrash } from 'react-icons/hi';
 
-type User = {
+interface User {
+  id: number;
   name: string;
   email: string;
-  contact: string;
   role: string;
-  status: string;
-};
+}
 
 const initialUsers: User[] = [
-  {
-    name: 'L3 Admin',
-    email: 'l3admin@yopmail.com',
-    contact: '+971 50 123 4567',
-    role: 'L3 Admin',
-    status: 'Active',
-  },
-  {
-    name: 'Support Agent',
-    email: 'support@yopmail.com',
-    contact: '+91 9876543210',
-    role: 'Agent',
-    status: 'Inactive',
-  },
+  { id: 1, name: 'Abhishek Sharma', email: 'abhishek@gmail.com', role: 'Admin' },
+  { id: 2, name: 'Riya Mehta', email: 'riya@gmail.com', role: 'Editor' },
+  { id: 3, name: 'Jay Verma', email: 'jay@gmail.com', role: 'Viewer' },
 ];
 
 export default function ManageUsersPage() {
   const [users, setUsers] = useState<User[]>(initialUsers);
-  const [isEditing, setIsEditing] = useState(false);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [editIndex, setEditIndex] = useState<number | null>(null);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
 
-  const handleDelete = (index: number) => {
-    const updated = [...users];
-    updated.splice(index, 1);
-    setUsers(updated);
-  };
-
-  const handleEdit = (user: User, index: number) => {
-    setCurrentUser(user);
-    setEditIndex(index);
-    setIsEditing(true);
-  };
-
-  const handleSave = () => {
-    if (editIndex !== null && currentUser) {
-      const updatedUsers = [...users];
-      updatedUsers[editIndex] = currentUser;
-      setUsers(updatedUsers);
-      setIsEditing(false);
-      setCurrentUser(null);
-      setEditIndex(null);
+  const handleDelete = (id: number) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this user?');
+    if (confirmDelete) {
+      setUsers((prev) => prev.filter((user) => user.id !== id));
     }
+  };
+
+  const handleEditSave = () => {
+    setUsers((prev) =>
+      prev.map((user) => (user.id === editingUser?.id ? editingUser : user))
+    );
+    setEditingUser(null);
   };
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Manage Users</h2>
+      <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">Manage Users</h2>
+
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border rounded shadow-md">
-          <thead className="bg-blue-50">
+        <table className="min-w-full border border-gray-200 dark:border-gray-700 rounded-md overflow-hidden">
+          <thead className="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-white">
             <tr>
-              <th className="py-2 px-4 border">Name</th>
-              <th className="py-2 px-4 border">Email</th>
-              <th className="py-2 px-4 border">Contact</th>
-              <th className="py-2 px-4 border">Role</th>
-              <th className="py-2 px-4 border">Status</th>
-              <th className="py-2 px-4 border">Actions</th>
+              <th className="py-3 px-4 text-left">Name</th>
+              <th className="py-3 px-4 text-left">Email</th>
+              <th className="py-3 px-4 text-left">Role</th>
+              <th className="py-3 px-4 text-left">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {users.map((user, index) => (
-              <tr key={index} className="hover:bg-gray-50">
-                <td className="py-2 px-4 border">{user.name}</td>
-                <td className="py-2 px-4 border">{user.email}</td>
-                <td className="py-2 px-4 border">{user.contact}</td>
-                <td className="py-2 px-4 border">{user.role}</td>
-                <td className="py-2 px-4 border">{user.status}</td>
-                <td className="py-2 px-4 border space-x-2">
+            {users.map((user) => (
+              <tr
+                key={user.id}
+                className="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+              >
+                <td className="py-2 px-4">{user.name}</td>
+                <td className="py-2 px-4">{user.email}</td>
+                <td className="py-2 px-4">{user.role}</td>
+                <td className="py-2 px-4 space-x-2">
                   <button
-                    onClick={() => handleEdit(user, index)}
-                    className="bg-yellow-400 text-white px-2 py-1 rounded hover:bg-yellow-500"
+                    onClick={() => setEditingUser(user)}
+                    className="text-blue-600 hover:text-blue-800 transition"
+                    title="Edit"
                   >
-                    Edit
+                    <HiOutlinePencilAlt className="inline-block text-lg" />
                   </button>
                   <button
-                    onClick={() => handleDelete(index)}
-                    className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+                    onClick={() => handleDelete(user.id)}
+                    className="text-red-600 hover:text-red-800 transition"
+                    title="Delete"
                   >
-                    Delete
+                    <HiOutlineTrash className="inline-block text-lg" />
                   </button>
                 </td>
               </tr>
@@ -100,41 +80,50 @@ export default function ManageUsersPage() {
       </div>
 
       {/* Edit Modal */}
-      {isEditing && currentUser && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-10">
-          <div className="bg-white p-6 rounded-md w-full max-w-md">
-            <h3 className="text-xl font-bold mb-4">Edit User</h3>
-
+      {editingUser && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg w-full max-w-md">
+            <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">
+              Edit User
+            </h3>
             <input
               type="text"
               placeholder="Name"
-              value={currentUser.name}
+              value={editingUser.name}
               onChange={(e) =>
-                setCurrentUser({ ...currentUser, name: e.target.value })
+                setEditingUser({ ...editingUser, name: e.target.value })
               }
-              className="w-full mb-3 px-4 py-2 border rounded"
+              className="w-full mb-3 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring dark:bg-gray-800 dark:text-white"
             />
-
             <input
               type="email"
               placeholder="Email"
-              value={currentUser.email}
+              value={editingUser.email}
               onChange={(e) =>
-                setCurrentUser({ ...currentUser, email: e.target.value })
+                setEditingUser({ ...editingUser, email: e.target.value })
               }
-              className="w-full mb-3 px-4 py-2 border rounded"
+              className="w-full mb-3 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring dark:bg-gray-800 dark:text-white"
+            />
+            <input
+              type="text"
+              placeholder="Role"
+              value={editingUser.role}
+              onChange={(e) =>
+                setEditingUser({ ...editingUser, role: e.target.value })
+              }
+              className="w-full mb-4 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring dark:bg-gray-800 dark:text-white"
             />
 
-            <div className="flex justify-end space-x-3 mt-4">
+            <div className="flex justify-end space-x-3">
               <button
-                onClick={() => setIsEditing(false)}
-                className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
+                onClick={() => setEditingUser(null)}
+                className="px-4 py-2 rounded-md bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 text-sm"
               >
                 Cancel
               </button>
               <button
-                onClick={handleSave}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                onClick={handleEditSave}
+                className="px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white text-sm"
               >
                 Save
               </button>
@@ -145,6 +134,7 @@ export default function ManageUsersPage() {
     </div>
   );
 }
+
 
 
   

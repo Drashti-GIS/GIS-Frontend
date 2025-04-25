@@ -2,7 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useTheme } from 'next-themes';
 import {
+  HiOutlineMenuAlt3,
+  HiOutlineX,
   HiOutlineHome,
   HiOutlineClipboardList,
   HiOutlineDocumentReport,
@@ -14,11 +18,8 @@ import {
   HiOutlineBookOpen,
   HiOutlineLogout,
   HiOutlineSun,
-  HiOutlineMoon,
+  HiOutlineMoon
 } from 'react-icons/hi';
-
-import { useEffect, useState } from 'react';
-import { useDarkMode } from '../hooks/useDarkMode'; // ✅ Make sure this exists
 
 const menuItems = [
   { name: 'Overview', icon: HiOutlineHome, href: '/admin/overview' },
@@ -35,25 +36,45 @@ const menuItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const [animate, setAnimate] = useState(false);
-  const { theme, toggleTheme } = useDarkMode(); // ✅ Custom hook
+  const [isOpen, setIsOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
+
+  const toggleSidebar = () => setIsOpen(!isOpen);
 
   useEffect(() => {
-    const timeout = setTimeout(() => setAnimate(true), 50);
-    return () => clearTimeout(timeout);
-  }, []);
+    setIsOpen(false);
+  }, [pathname]);
 
   return (
-    <div
-      className={`h-screen bg-white dark:bg-[#1f2937] border-r border-gray-200 dark:border-gray-700 px-6 py-8 shadow-sm flex flex-col justify-between transform transition-all duration-700 ${
-        animate ? 'translate-x-0 opacity-100' : '-translate-x-10 opacity-0'
-      }`}
-    >
-      <div>
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-8 tracking-wide">
-          Admin Panel
-        </h2>
+    <>
+      {/* Mobile toggle */}
+      <div className="md:hidden fixed top-4 left-4 z-50">
+        <button
+          onClick={toggleSidebar}
+          className="text-3xl text-gray-800 dark:text-white focus:outline-none"
+        >
+          {isOpen ? <HiOutlineX /> : <HiOutlineMenuAlt3 />}
+        </button>
+      </div>
 
+      <div
+        className={`fixed md:static top-0 left-0 h-screen w-64 bg-white dark:bg-[#1f2937] border-r border-gray-200 dark:border-gray-700 px-6 py-8 shadow-md transform transition-transform duration-300 z-40
+          ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white tracking-wide">
+            Admin Panel
+          </h2>
+          <button
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            className="text-2xl text-gray-700 dark:text-gray-200"
+          >
+            {theme === 'dark' ? <HiOutlineSun /> : <HiOutlineMoon />}
+          </button>
+        </div>
+
+        {/* Menu */}
         <ul className="space-y-2">
           {menuItems.map(({ name, icon: Icon, href }) => {
             const isActive = pathname === href;
@@ -62,13 +83,12 @@ export default function Sidebar() {
                 <Link href={href}>
                   <span
                     className={`flex items-center gap-3 px-4 py-2 rounded-md text-base font-medium cursor-pointer transition-all duration-300 ease-in-out
-                      ${
-                        isActive
-                          ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 font-semibold scale-[1.02] shadow-md'
-                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-blue-600 dark:hover:text-blue-400 hover:scale-[1.01]'
+                      ${isActive
+                        ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 font-semibold'
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-blue-600 dark:hover:text-blue-400'
                       }`}
                   >
-                    <Icon className="text-xl transition-transform duration-300" />
+                    <Icon className="text-xl" />
                     {name}
                   </span>
                 </Link>
@@ -77,39 +97,21 @@ export default function Sidebar() {
           })}
         </ul>
 
-        {/* 🔁 Dark Mode Toggle */}
-        <div className="mt-10 mb-4">
+        {/* Logout */}
+        <div className="mt-10">
           <button
-            onClick={toggleTheme}
-            className="flex items-center gap-2 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-yellow-400 transition-all duration-300 px-4 py-2 rounded-md w-full"
+            onClick={() => window.location.href = '/'}
+            className="flex items-center gap-2 text-red-600 dark:text-red-400 hover:text-white hover:bg-red-500 dark:hover:bg-red-600 transition-all duration-300 px-4 py-2 rounded-md w-full"
           >
-            {theme === 'dark' ? (
-              <>
-                <HiOutlineSun className="text-xl" />
-                Light Mode
-              </>
-            ) : (
-              <>
-                <HiOutlineMoon className="text-xl" />
-                Dark Mode
-              </>
-            )}
+            <HiOutlineLogout className="text-xl" />
+            Logout
           </button>
         </div>
       </div>
-
-      {/* 🚪 Logout */}
-      <div>
-        <button
-          onClick={() => (window.location.href = '/')}
-          className="flex items-center gap-2 text-red-600 dark:text-red-400 hover:text-white hover:bg-red-500 dark:hover:bg-red-600 transition-all duration-300 px-4 py-2 rounded-md w-full"
-        >
-          <HiOutlineLogout className="text-xl" />
-          Logout
-        </button>
-      </div>
-    </div>
+    </>
   );
 }
+
+
 
 

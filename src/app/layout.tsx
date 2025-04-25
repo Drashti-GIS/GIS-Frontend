@@ -1,17 +1,26 @@
-// src/app/layout.tsx
-import './globals.css'
+// app/layout.tsx
 
-export const metadata = {
-  title: 'Land Data System',
-  description: 'Platform for land project analysis',
-}
+import './globals.css';
+import { ThemeProvider } from 'next-themes';
+import type { Metadata } from 'next';
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export const metadata: Metadata = {
+  title: 'Land Data Analysis System',
+  description: 'Admin dashboard with dark mode and responsive sidebar',
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en">
-      <body className="bg-white text-gray-900 dark:bg-gray-900 dark:text-white transition-colors duration-300">
-        {children}
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }
